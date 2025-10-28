@@ -1,4 +1,4 @@
-# GBS data processing for POMA.
+# GBS data processing for Ericameria nauseosa nauseosa from Pyramid lake.
 
 This document presents our workflow and rationale for genotype inference from high throughput sequencing of reduced representation libraries (GBS, RADseq, ddRADseq, etc). Several canned software packages or computational workflows exist for handling this type of data. These methods rely on set thresholds for sequencing coverage depth per locus to call hard genotypes. The biggest cost of using these methods is throwing away much, if not most, of the data. Examples of such software/workflows include:
 
@@ -7,14 +7,6 @@ This document presents our workflow and rationale for genotype inference from hi
 * [ipyrad](https://ipyrad.readthedocs.io/en/master/)
 
 See [Nielsen et al. 2011](./papers/Nielsen_etal_2011.pdf) and [Buerkle and Gompert 2013](./papers/Buerkle_Gompert_2013.pdf) for articulate thoughts about this.
-
-## Running to do list
-
-* insert plate map and ID file path in DNA extractions
-* add upstream path of mastermix cocktail file
-* fill in number of reads before and after cleaning
-* Add explanation of selectContigs.sh parts
-* Add estimated run times for each step
 
 ## Table of Contents
 
@@ -51,10 +43,9 @@ See [Nielsen et al. 2011](./papers/Nielsen_etal_2011.pdf) and [Buerkle and Gompe
 13. Appendices
     1. Appendix 1: Useful Commands
 
-## Focal Species: *Polites mardon*
+## Focal Species: *Ericameria nauseosa nauseosa*
 
-<img src="images/KRLAplant.jpg" alt="A Krascheninnikovia lanata plant" width="400">
-<img src="images/KRLAmap.png" alt="Map of sampling locations" width="400">
+# Background and rationale here
 
 *Polites mardon* (winterfat) is a perennial shrub with a broad north/south distributional range spanning western Canada, U.S. and Mexico. The species is exclusive to North America and its current range is likely the result of southward expansion following two distinct migration events from eastern Mongolian lineages ~ 1.8 - 0.5 Mya.
 
@@ -62,7 +53,7 @@ The species is a halophyte (salt-tolerant) and is one of the only species outsid
 
 Population sampling was a combined effort throughout 2021 - 2022 with Cathy Silliman doing collections for most of the populations in the west, central, and north Great Basin and Seth Romero gathering collections from the eastern Great Basin and Mojave. Anecdotally, many of the individuals in the north, central and eastern Great Basin were smaller in stature but part of broad near-monocultures that created consistent cover across broad areas. By contrast, many of the populations in the Mojave and southwest Great Basin were large individuals that occured in small islands or as sub-dominants with only a handful of individuals living in close proximity. The populations **DT** and **CL**, in particular, had nearly every individual sampled that could found at those locations.
 
-## Directory Structure
+## Directory Structure - optional
 
 * Create a project folder in your working directory called KRLA with `mkdir KRLA`
 * The following directory structure should be made throughout the tutorial
@@ -98,8 +89,7 @@ flowchart TD;
 ## Sequencing
 
 * 1 lane of S2 chemistry NovaSeq data at UTGSAF in 03/2023
-* sequence results in /archive/parchman\_lab/rawdata\_to\_backup/KRLA/KRLA\_S1\_L001\_R1\_001.fastq.gz
-
+* sequence results in /archive/parchman_lab/rawdata_to_backup/
 ## Data cleaning
 
 ### Cleaning contaminants
@@ -261,7 +251,6 @@ Emily: maybe write out some basic features or questions for discussion about the
    bwa index -p ernacon -a bwtsw ojincantatabio-uni4263-hap2-mb-hirise-zpxz8__01-06-2024__final_assembly.fasta &
    ```
    
-# work done to here 10/21
 
 ### Map, sort and index
 
@@ -272,13 +261,15 @@ Emily: maybe write out some basic features or questions for discussion about the
    module load samtools/1.10
    ```
 
-2. Run the script `bwa_mem2sorted_bam.sh` using the following nohup settings. Here we are calling the bash script from within the bwa directory. Note the relative paths in 
+2. Run the script `bwa_mem2sorted_bam.sh` using the following nohup settings. Here we are calling the bash script from within the bwa directory. The shell script needs editing (try `nano` for this) to specify the name of the reference used above in the indexing step. FOr this project that name is `ernacon`. Note the relative paths in call below:
 
    ```sh
    nohup bash ../scripts/bwa_mem2sorted_bam.sh 2> /dev/null &
    ```
 
    * Running the script in this way prevents the process from being interrupted (i.e. you can disconnect from the server while this runs) while also capturing progress print statements in `nohup.out`. You can re-login to the server and check the progress of mapping by going into the `bwa` directory and entering the following:
+
+# work done to here 10/28 TLP
 
       ```sh
       tail -n 1 nohup.out
