@@ -1,4 +1,4 @@
-# GBS data processing for Ericameria nauseosa nauseosa from Pyramid lake.
+# GBS data processing for *Ericameria nauseosa nauseosa* from Pyramid lake.
 
 This document presents our workflow and rationale for genotype inference from high throughput sequencing of reduced representation libraries (GBS, RADseq, ddRADseq, etc). Several canned software packages or computational workflows exist for handling this type of data. These methods rely on set thresholds for sequencing coverage depth per locus to call hard genotypes. The biggest cost of using these methods is throwing away much, if not most, of the data. Examples of such software/workflows include:
 
@@ -47,20 +47,20 @@ See [Nielsen et al. 2011](./papers/Nielsen_etal_2011.pdf) and [Buerkle and Gompe
 
 # Background and rationale here
 
-*Polites mardon* (winterfat) is a perennial shrub with a broad north/south distributional range spanning western Canada, U.S. and Mexico. The species is exclusive to North America and its current range is likely the result of southward expansion following two distinct migration events from eastern Mongolian lineages ~ 1.8 - 0.5 Mya.
+Rubber rabbitbrush *Ericameria nauseosa* is a perennial shrub in the Aster family (Asteraceae), often co-occuring with another member, sagebrush (*Artemisia tridentata*). *E. nauseosa* is broadly distributed across desert, woodland, and arid montane habitats of the west from northern Mexico to southern Canada. It is a foundational plant species that thrives as a primary successional colonizer of dryland and distrubed sites and acts as a soil stabilizer. *E. nauseosa* is an important resource for birds, mammals, and insects. It hosts large diversitys and quantities of gall-forming insects and serves as a critical late-season pollen source for diverse pollinator communities.  
 
-The species is a halophyte (salt-tolerant) and is one of the only species outside of the *Atriplex* complex to co-dominate the salt desert shrublands of the Great Basin. It is a highly nutritious source of forage which is notable given that it is prone to replacement by the toxic exotic *Halogeton glomeratus* within disturbed habitats. The common name 'winterfat' is indicative of the persistence of green leaves throughout the winter season and late fall phenology.
+*E. nauseosa* displays a wide variety of phenotypic variation and has been classified as two recogonized subspecies, *E. n. nauseosa* (grey-stemmed) and *E. n. consimillis* (green-stemmed), and 22 varities; however, underlying genetic data do not support most of these variety taxanomic distictions. Regardless, phenotypic and genetic divergence has been identified across environmental gradients for the two subspecies. Phenotypic differences in morphology and chemistry are predicted to drive distinct insect and herbivore communities.
 
-Population sampling was a combined effort throughout 2021 - 2022 with Cathy Silliman doing collections for most of the populations in the west, central, and north Great Basin and Seth Romero gathering collections from the eastern Great Basin and Mojave. Anecdotally, many of the individuals in the north, central and eastern Great Basin were smaller in stature but part of broad near-monocultures that created consistent cover across broad areas. By contrast, many of the populations in the Mojave and southwest Great Basin were large individuals that occured in small islands or as sub-dominants with only a handful of individuals living in close proximity. The populations **DT** and **CL**, in particular, had nearly every individual sampled that could found at those locations.
+Insert information about sampling 
 
 ## Directory Structure - optional
 
-* Create a project folder in your working directory called KRLA with `mkdir KRLA`
+* Create a project folder in your working directory called KRLA with `mkdir ERNA`
 * The following directory structure should be made throughout the tutorial
 
 ```mermaid
 flowchart TD;
-    A(personal directory <br> /working/romero/) --> B(species folder <br> /romero/KRLA/)
+    A(personal directory <br> /working/ebrewer/) --> B(species folder <br> /ebrewer/ERNA/)
     B --> C(assembly)
     B --> N (select_seqs)
     B --> D(bwa)
@@ -229,8 +229,6 @@ flowchart TD;
    nohup gzip *fastq &>/dev/null &
    ```
 # E. Brewer starts here
-## subheading
-### subsub heading
 
 # EB/TLP: Start ERNA reference assembly here
 
@@ -244,7 +242,8 @@ Emily: maybe write out some basic features or questions for discussion about the
 - `.fastq` files for each of the 400 ERNA individuals are in `/working/ebrewer/fastq`
 
 2. Indexing reference genome with `bwa`
-- emily think, write a few sentences what this doing, questions?
+- Builds a 'lookup system' that makes read mapping fast without scanning the entire genome each time
+- Converts the raw reference fasta sequence into a compresed, searchable data structure using BWT and FM-index. Allows bwa to quickly and efficiently find where sequence reads match with the genome during alignment.
 
    ```sh
    module load bwa/0.7.17-r1188
