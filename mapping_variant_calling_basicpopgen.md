@@ -341,20 +341,20 @@ ls *.sorted.bam | sed 's/\*//' > bam_list.txt
 
 ### Pileup, call, and filter
 
-1. Lets do this in the `bwa/` directory, should now have all of the .bam and .bam.bai files as well as a copy of the reference genome (`GCA_905404245.1_ilHesComm1.1_alternate_haplotype_genomic.fna`, and associated index files `hcomma*`). We will use `bcftools 1.9` and run the following:
+1. Lets do this in the `bwa/` directory, should now have all of the .bam and .bam.bai files as well as a copy of the reference genome (`ojincantatabio-uni4263-hap2-mb-hirise-zpxz8__01-06-2024__final_assembly.fasta`, and associated index files `ernacon*`). We will use `bcftools 1.9` and run the following:
    ```sh
    module load bcftools/1.9
    ```
 
    ```sh
-   nohup bcftools mpileup -a DP,AD,INFO/AD -C 50 -d 250 -f rf.3.2.95 -q 30 -Q 20 -I -b bam_list.txt -o POMAdenovo.bcf 2> /dev/null &
-   ```
-## TLP 10.13.24 marker here
-   ```sh
-   bcftools call -v -m -f GQ POMAdenovo.bcf -O z -o POMAdenovo.vcf.gz
+   nohup bcftools mpileup -a DP,AD,INFO/AD -C 50 -d 250 -f ojincantatabio-uni4263-hap2-mb-hirise-zpxz8__01-06-2024__final_assembly.fasta -q 30 -Q 20 -I -b bam_list.txt -o ERNAdenovo.bcf 2> /dev/null &
    ```
 
-## TLP 10.13.24 marker here
+   ```sh
+   bcftools call -v -m -f GQ ERNAdenovo.bcf -O z -o ERNAdenovo.vcf.gz
+   ```
+
+
 
 
 ### Understanding bcftools parameters
