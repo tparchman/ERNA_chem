@@ -349,11 +349,38 @@ ls *.sorted.bam | sed 's/\*//' > bam_list.txt
    ```sh
    nohup bcftools mpileup -a DP,AD,INFO/AD -C 50 -d 250 -f ojincantatabio-uni4263-hap2-mb-hirise-zpxz8__01-06-2024__final_assembly.fasta -q 30 -Q 20 -I -b bam_list.txt -o ERNAdenovo.bcf 2> /dev/null &
    ```
+### step-by-step
+* `bcftools mpileup` -- command reads one or more BAM files and creates a BCF file describing the pileup (base information per genomic position)
+   * summarizing evidence for SNPs/indels 
+* `-a DP, AD, INFO/AD` -- includes extra annotations in the output: 
+   * `DP`: read depth per position
+   * `AD`: allele depth 
+   * `INFO/AD`: adds allele depth on the INFO field 
+* `-C 50` -- adjusts mapping quality for reads with excessive mismatches 
+   * Helps reduce false positive in variant calling 
+* `-d 250` -- maximum per-BAM depth
+   * pileup will ignore sites with coverage deeper than 250 to prevent bias from high coverage regions
+* `-f ojincantatabio-uni4263-hap2-mb-hirise-zpxz8__01-06-2024__final_assembly.fasta` -- reference genome file 
+* `-q 30` -- minimum mapping quality to include a read (filters out poorly mapped reads)
+* `-Q 20` -- minimum base quality for a base to be considered (filters out unreliable base calls)
+* `-I` -- ignore indels, only report SNP information 
+* `-b bam_list.txt` -- provides a text file listing all BAM files to process
+* `-o ERNAdenovo.bcf` -- output BCF file
 
    ```sh
-   bcftools call -v -m -f GQ ERNAdenovo.bcf -O z -o ERNAdenovo.vcf.gz
+   nohup bcftools call -v -m -f GQ ERNAdenovo.bcf -O z -o ERNAdenovo.vcf.gz 2> /dev/null &
    ```
-
+### step-by-step
+* `bcftools call` -- calls variants (SNPs and indels) from BCF file
+   * looks at pileup of reads at each genomic position and determines whether there is evidence for a variant relative to reference
+* `ERNAdenovo.bcf` -- BCF file previously generated
+* `-v` -- output only variant sites 
+   * positions that match reference exactly are excluded from the output
+* `-m` -- multiallelic calling model, can handle positions with more than one alternative allele
+* `f GQ` -- specifies format tags to calculate for genotypes
+   * `GQ` = Genotype Quality, a measure of confidence in called genotype
+* `-0 z` -- output file format, compressed 
+* `-o ERNAdenovo.vcf.gz` specifies name of output file
 
 
 
