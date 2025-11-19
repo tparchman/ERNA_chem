@@ -370,6 +370,7 @@ ls *.sorted.bam | sed 's/\*//' > bam_list.txt
    ```sh
    nohup bcftools call -v -m -f GQ ERNAdenovo.bcf -O z -o ERNAdenovo.vcf.gz 2> /dev/null &
    ```
+
 ### step-by-step
 * `bcftools call` -- calls variants (SNPs and indels) from BCF file
    * looks at pileup of reads at each genomic position and determines whether there is evidence for a variant relative to reference
@@ -379,7 +380,7 @@ ls *.sorted.bam | sed 's/\*//' > bam_list.txt
 * `-m` -- multiallelic calling model, can handle positions with more than one alternative allele
 * `f GQ` -- specifies format tags to calculate for genotypes
    * `GQ` = Genotype Quality, a measure of confidence in called genotype
-* `-0 z` -- output file format, compressed 
+* `-O z` -- output file format, compressed 
 * `-o ERNAdenovo.vcf.gz` specifies name of output file
 
 
@@ -396,7 +397,7 @@ ls *.sorted.bam | sed 's/\*//' > bam_list.txt
 * -O --output-type TYPE  'b' compressed BCF; 'u' uncompressed BCF; 'z' compressed VCF; 'v' uncompressed VCF [v]
 * -o --output FILE       write output to FILE [standard output]
 
-# TLP stopped here, talk to Seth.
+
 ## Preview vcf to be sure that things are looking good in terms of expected number of variants in the raw .vcf. 
 
 Once the unfiltered vcf looks good, move to variant_filtering
@@ -416,31 +417,31 @@ Using vcftools to do the bare minimum filtering, which entails removing any inde
    --remove-filtered-all \
    --recode \
    --recode-INFO-all \
-   --gzvcf POMA.vcf.gz \
+   --gzvcf ERNA.vcf.gz \
    --out 
    ```
 
 ```sh
-vcftools --gzvcf POMA.vcf.gz --out POMA.vcf.gz --missing-indv
+vcftools --gzvcf ERNA.vcf.gz --out ERNA.vcf.gz --missing-indv
 
 ```
 
 Below we are making a list of individuals that have too much missing data to move forward with. Here we taking individuals that have data at 50% or more of loci.
 
 ```sh
-   awk '$5 > 0.5 {print $1}' POMA.imiss | tail -n +2 > indmiss50.txt
+   awk '$5 > 0.5 {print $1}' ERNA.imiss | tail -n +2 > indmiss50.txt
 ```
 
 Running vcftools to make a vcf that contains only the individuals specified in indmiss50.txt made above. First step is making the list of individuals with TOO MUCH missing data.
 
 ```sh
-   awk '$5 > 0.5 {print $1}' POMA.imiss | tail -n +2 > indmiss50.txt
+   awk '$5 > 0.5 {print $1}' ERNA.imiss | tail -n +2 > indmiss50.txt
 ```
 
 Filter the full vcf using the `--exclude` argument and the indmiss50.txt file made above.
 
 ```sh
-vcftools --gzvcf POMA.vcf.gz --exclude indmiss50.txt --maf 0.04 --max-meanDP 100 --min-meanDP 2 --minQ 20 --missing .7 --recode --recode-INFO-all --remove-filter-all --out POMA.04.maxdp100.mindp2.miss70.vcf
+vcftools --gzvcf ERNA.vcf.gz --exclude indmiss50.txt --maf 0.04 --max-meanDP 100 --min-meanDP 2 --minQ 20 --missing .7 --recode --recode-INFO-all --remove-filter-all --out ERNA.04.maxdp100.mindp2.miss70.vcf
 ```
 
 
