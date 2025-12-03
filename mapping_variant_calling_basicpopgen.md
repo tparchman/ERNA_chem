@@ -417,32 +417,69 @@ Using vcftools to do the bare minimum filtering, which entails removing any inde
    --remove-filtered-all \
    --recode \
    --recode-INFO-all \
-   --gzvcf ERNA.vcf.gz \
-   --out 
+   --gzvcf ERNAdenovo.vcf.gz \
+   --out ERNA.biallelic &
    ```
 
 ```sh
-vcftools --gzvcf ERNA.vcf.gz --out ERNA.vcf.gz --missing-indv
-
+After filtering, kept 400 out of 400 Individuals
+Outputting VCF file...
+After filtering, kept 305481 out of a possible 1042457 Sites
 ```
 
+Calculate per-individual missing data for filtered VCF file
+
+```sh
+vcftools --vcf ERNA.biallelic.recode.vcf --missing-indv
+
+```
 Below we are making a list of individuals that have too much missing data to move forward with. Here we taking individuals that have data at 50% or more of loci.
 
-```sh
-   awk '$5 > 0.5 {print $1}' ERNA.imiss | tail -n +2 > indmiss50.txt
-```
 
 Running vcftools to make a vcf that contains only the individuals specified in indmiss50.txt made above. First step is making the list of individuals with TOO MUCH missing data.
+```sh
+awk '$5 >= 0.80 {print $1}' out.imiss > indmiss80.txt
+```
+378 individuals
+```sh
+awk '$5 >= 0.85 {print $1}' out.imiss > indmiss85.txt
+```
+193 individuals
+```sh
+awk '$5 >= 0.90 {print $1}' out.imiss > indmiss90.txt
+```
+93 individuals
+```sh
+awk '$5 >= 0.95 {print $1}' out.imiss > indmiss95.txt
+```
+55 individuals
+
+
+Filter the full vcf using the `--exclude` argument and the indmiss__.txt files made above.
 
 ```sh
-   awk '$5 > 0.5 {print $1}' ERNA.imiss | tail -n +2 > indmiss50.txt
+vcftools --gzvcf ERNA.biallelic.recode.vcf \
+--exclude indmiss90.txt \
+--maf 0.04 \
+--max-meanDP 100 \
+--min-meanDP 2 \
+--minQ 20 \
+--max-missing 0.7 \
+--recode \
+--recode-INFO-all \
+--remove-filtered-all \
+--out ERNA90.04.maxdp100.mindp2.miss70
 ```
+After filtering, kept 2268 out of a possible 305481 Sites
 
-Filter the full vcf using the `--exclude` argument and the indmiss50.txt file made above.
+### What each command does 
+* --excludes indmiss90.txt: removes individuals listed in indmiss90.txt
+* --maf 0.04: filters variants based on minor allele frequency, removing rare alleles that might be errors or uninformative
+* --max-meanDP 100 and --min-mean DP 2: filters variants based on mean sequencing depth (DP) across samples, at least 2 reads per site but no more than 100 reads on average. Helps avoid low or high coverage sites
+* --minQ 20: minimum site quality score, removed low quality calls
+* --max-missing 0.7: filters sites based on genotype missingness, retain sites with at least 70% of genotpes called (≤ 30% missing)
 
-```sh
-vcftools --gzvcf ERNA.vcf.gz --exclude indmiss50.txt --maf 0.04 --max-meanDP 100 --min-meanDP 2 --minQ 20 --missing .7 --recode --recode-INFO-all --remove-filter-all --out ERNA.04.maxdp100.mindp2.miss70.vcf
-```
+
 
 
 ### Understanding vcftools Parameters
