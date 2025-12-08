@@ -433,7 +433,7 @@ Calculate per-individual missing data for filtered VCF file
 vcftools --vcf ERNA.biallelic.recode.vcf --missing-indv
 
 ```
-Below we are making a list of individuals that have too much missing data to move forward with. Here we taking individuals that have data at 50% or more of loci.
+Below we are making a list of individuals that have too much missing data to move forward with. Here we taking individuals that have data at 80% or more of loci.
 
 
 Running vcftools to make a vcf that contains only the individuals specified in indmiss50.txt made above. First step is making the list of individuals with TOO MUCH missing data.
@@ -452,14 +452,14 @@ awk '$5 >= 0.90 {print $1}' out.imiss > indmiss90.txt
 ```sh
 awk '$5 >= 0.95 {print $1}' out.imiss > indmiss95.txt
 ```
-55 individuals
+54 individuals
 
 
 Filter the full vcf using the `--exclude` argument and the indmiss__.txt files made above.
 
 ```sh
 vcftools --gzvcf ERNA.biallelic.recode.vcf \
---exclude indmiss90.txt \
+--exclude indmiss95.txt \
 --maf 0.04 \
 --max-meanDP 100 \
 --min-meanDP 2 \
@@ -468,7 +468,7 @@ vcftools --gzvcf ERNA.biallelic.recode.vcf \
 --recode \
 --recode-INFO-all \
 --remove-filtered-all \
---out ERNA90.04.maxdp100.mindp2.miss70
+--out ERNA95.04.maxdp100.mindp2.miss70
 ```
 After filtering, kept 2268 out of a possible 305481 Sites
 
@@ -479,8 +479,24 @@ After filtering, kept 2268 out of a possible 305481 Sites
 * --minQ 20: minimum site quality score, removed low quality calls
 * --max-missing 0.7: filters sites based on genotype missingness, retain sites with at least 70% of genotpes called (≤ 30% missing)
 
+### remove maf and max-missing here to visualize in jupyter what setting different parameters does to data set
+```sh
+vcftools --gzvcf ERNA.biallelic.recode.vcf \
+--exclude indmiss95.txt \
+--max-meanDP 100 \
+--min-meanDP 2 \
+--minQ 20 \
+--recode \
+--recode-INFO-all \
+--remove-filtered-all \
+--out ERNA95.maxdp100.mindp2
+```
+After filtering, kept 25580 out of a possible 305481 Sites
 
-
+Convert to frequency file
+```sh
+ vcftools --vcf ERNA95.maxdp100.mindp2.recode.vcf --freq --out ERNA95.maxdp100.mindp2.recode
+ ```
 
 ### Understanding vcftools Parameters
 
